@@ -1,0 +1,49 @@
+import pafy 
+from datetime import date
+
+class YoutubeStuff:
+    
+  def api_set(self, api_key):
+        pafy.set_api_key(key=api_key)
+  
+  def playlist_songs(self, url):
+        try:
+            playlist_data = pafy.get_playlist2(url)
+            self.playlist_title = playlist_data.title
+            songs = '\n'
+            for data in playlist_data:
+                songs  = songs + f'{data.title}\n'
+            return songs
+        except Exception as e:
+            print('Error:', e)
+        finally:
+            print('Success: Songs Retrieved')
+    
+  def save_songs(self, path, songs):
+        try:
+            f = open(f'{path}\\{self.playlist_title}.txt', 'a', encoding='utf-8')
+            f.write(f'\n\nDATE CREATED: {str(date.today())}\n\n{songs}')
+            f.close
+        except Exception as e:
+            print('Error:', e)
+        finally:
+            print('Success: File Created')
+
+choice = ''
+playlists_list = []
+
+while True:
+    url = input('Playlist URL: ')
+    playlists_list.append(url)
+    choice = input('More Playlists?(y/n): ')
+    if choice == 'n' or choice == 'N':
+        break
+
+path = input('Save Path:')
+
+api_key = 'your api key goes here'
+for url in playlists_list:
+    obj = YoutubeStuff()
+    obj.api_set(api_key)
+    songs = obj.playlist_songs(url)
+    obj.save_songs(path, songs)
